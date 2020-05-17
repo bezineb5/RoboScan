@@ -1,0 +1,6 @@
+adafruit-circuitpython-tsl2561
+gpiozero
+
+gphoto2
+
+requests
