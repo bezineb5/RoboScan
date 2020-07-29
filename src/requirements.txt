@@ -1,0 +1,14 @@
+# Hardware
+adafruit-circuitpython-tsl2561
+rpi.gpio
+gpiozero
+
+# Camera
+gphoto2
+
+# Web
+flask
+flask-restx
+flask-socketio
+#eventlet
+requests

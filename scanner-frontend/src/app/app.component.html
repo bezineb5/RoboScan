@@ -1,0 +1,48 @@
+<mat-toolbar color="primary">
+  <span>{{title}}</span>
+  <span class="example-spacer"></span>
+  <button mat-raised-button color="warn" (click)="onCancel()">Cancel</button>
+</mat-toolbar>
+
+
+<mat-horizontal-stepper linear #scannerstepper>
+  <mat-step [stepControl]="settingsGroup" [editable]="false">
+    <ng-template matStepLabel>Before starting</ng-template>
+    <p>Put the film in the machine.</p>
+    <p>Plug the camera.</p>
+    <p>Turn the camera on in tethered mode.</p>
+    <div>
+      <button mat-button color="primary" (click)="onReadyToStart()">Ready to start</button>
+    </div>
+  </mat-step>
+  <mat-step [editable]="false">
+    <ng-template matStepLabel>Calibration</ng-template>
+    <div>
+      <p>
+        Align the photo in the viewfinder. Move at least by 1 hole for calibration.
+      </p>
+      <button mat-raised-button *ngFor="let item of [1,2,3,4,5,6,7,8]" (click)="onSkipHoles(item)">{{item}}</button>
+    </div>
+    <div>
+      <button mat-button (click)="onResetCamera()">Reconnect camera</button>
+      <button mat-button color="primary" (click)="onStartScanning()">Start scanning</button>
+      <button mat-button color="warn" (click)="onCancel()">Cancel</button>
+    </div>
+  </mat-step>
+  <mat-step [editable]="false">
+    <ng-template matStepLabel>Scanning</ng-template>
+    <p>Please wait until scanning is finished</p>
+    <p>Scan in progress: {{scannedPhotoCount}} photos scanned.</p>
+    <div>
+      <button mat-button color="warn" (click)="onCancel()">Cancel</button>
+    </div>
+  </mat-step>
+  <mat-step [editable]="false">
+    <ng-template matStepLabel>Finished</ng-template>
+    <p>You are now done.</p>
+    <p>{{scannedPhotoCount}} photos were scanned.</p>
+    <div>
+      <button mat-button color="primary" (click)="scannerstepper.reset()">New scan</button>
+    </div>
+  </mat-step>
+</mat-horizontal-stepper>
