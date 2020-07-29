@@ -147,3 +147,5 @@ dmypy.json
 
 .env
 # End of https://www.gitignore.io/api/macos,python,visualstudiocode
+
+scanner-frontend/node_modules
