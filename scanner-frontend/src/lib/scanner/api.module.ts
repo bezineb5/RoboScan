@@ -2,15 +2,13 @@ import { NgModule, ModuleWithProviders, SkipSelf, Optional } from '@angular/core
 import { Configuration } from './configuration';
 import { HttpClient } from '@angular/common/http';
 
-
 import { ScannerService } from './api/scanner.service';
 
 @NgModule({
   imports:      [],
   declarations: [],
   exports:      [],
-  providers: [
-    ScannerService ]
+  providers: []
 })
 export class ApiModule {
     public static forRoot(configurationFactory: () => Configuration): ModuleWithProviders<ApiModule> {

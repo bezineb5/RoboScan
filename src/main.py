@@ -18,7 +18,7 @@ def main() -> None:
 
     end_event = threading.Event()
 
-    the_scanner = scanner.Scanner(args.led, args.backlight, args.pin1, args.pin2, args.pin3, args.pin4)
+    the_scanner = scanner.Scanner(args.led, args.infrared, args.backlight, args.pin1, args.pin2, args.pin3, args.pin4)
     the_scanner.on_session_stop = lambda: end_event.set()
     the_scanner.on_scan_finished = lambda count: utils.notify_ifttt(args.ifttt, "finished_scan", count)
 

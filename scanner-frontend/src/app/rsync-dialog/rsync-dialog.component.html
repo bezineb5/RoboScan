@@ -1,0 +1,21 @@
+<h1 mat-dialog-title>Connect to rsync</h1>
+<mat-dialog-content>
+    <p>
+       You can connect to the rsync server at the following address:
+    </p>
+    <pre>rsync://{{hostname}}/share</pre>
+    <p>
+        To make things faster, you can download a script to regularly (every 10 seconds) copy the files from the scanner to your drive.
+    </p>
+    <h2>Usage:</h2>
+    <pre># Download to current directory
+sync.sh
+# Download to a specific directory
+sync.sh ~/your_directory
+    </pre>
+
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <a mat-raised-button color="link" [href]="scriptFile" download="sync.sh"><mat-icon>get_app</mat-icon>Download</a>
+    <button mat-raised-button color="primary" mat-dialog-close>Close</button>
+</mat-dialog-actions>

@@ -20,7 +20,7 @@ DIRECTION = -1
 
 
 class Scanner:
-    def __init__(self, led_pin: int, backlight_pin: int, stepper_pin_1: int, stepper_pin_2: int, stepper_pin_3: int, stepper_pin_4: int) -> None:
+    def __init__(self, led_pin: int, led_use_infrared: bool, backlight_pin: int, stepper_pin_1: int, stepper_pin_2: int, stepper_pin_3: int, stepper_pin_4: int) -> None:
         self.is_in_use = threading.Lock()
         self.session_started = threading.Event()
         self.must_stop = threading.Event()
@@ -39,6 +39,7 @@ class Scanner:
         i2c = busio.I2C(board.SCL, board.SDA)
         self.lux_meter_device = lux_meter.LuxMeter(i2c)
         self.recent_lux: collections.deque = collections.deque(maxlen=BUFFER_LEN)
+        self.led_use_infrared = led_use_infrared
 
     def _scroll_through_holes(self):
         number_of_steps = 0
@@ -53,11 +54,13 @@ class Scanner:
                 number_of_steps += 1
                 self.stepper_device.rotate(SLEEP_TIME, DIRECTION * 1)
                 visible_lux, ir_lux = self.lux_meter_device.measure()
-                self.recent_lux.appendleft(visible_lux)
+                measured = ir_lux if self.led_use_infrared else visible_lux
+                self.recent_lux.appendleft(measured)
                 is_finished, is_new_hole, is_minimum = self._interpret_lux(list(self.recent_lux), had_a_minimum)
 
                 if is_finished:
                     log.info("No more holes")
+                    self.recent_lux.clear()
                     return
                 
                 if is_minimum:

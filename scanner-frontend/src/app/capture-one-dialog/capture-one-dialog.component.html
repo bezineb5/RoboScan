@@ -1,0 +1,10 @@
+<h1 mat-dialog-title>Integration with Capture One</h1>
+<mat-dialog-content>
+    <p>
+       If you are using Capture One for Mac, you can automate the import of scanned photos into a session. Download the file, copy it into the Capture Script folder. Refresh the scripts. Create a new session, and choose the "Sync with scanner" option in the Scripts menu.
+    </p>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <a mat-raised-button color="link" [href]="scriptFile" download="Sync with scanner.applescript"><mat-icon>get_app</mat-icon>Download</a>
+    <button mat-raised-button color="primary" mat-dialog-close>Close</button>
+</mat-dialog-actions>

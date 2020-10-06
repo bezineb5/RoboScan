@@ -1,14 +1,20 @@
 # Hardware
-adafruit-circuitpython-tsl2561
-rpi.gpio
-gpiozero
+adafruit-circuitpython-tsl2561==3.3.3
+rpi.gpio==0.7.0
+gpiozero==1.5.1
 
 # Camera
-gphoto2
+gphoto2==2.2.2
+
+# ExifTool
+PyExifTool==0.1.1
 
 # Web
-flask
-flask-restx
-flask-socketio
+flask==1.1.2
+flask-restx==0.2.0
+flask-socketio==4.3.1
 #eventlet
-requests
+requests==2.24.0
+
+# Configuration
+dataclasses-json==0.5.2

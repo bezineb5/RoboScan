@@ -8,5 +8,8 @@ tell application "Capture One 20"
 	set capturesPath to (captures of current document)
 end tell
 
-set the clipboard to (POSIX path of capturesPath)
-display notification ("Copied: " & (POSIX path of capturesPath))
+display notification ("Starting synchronization to: " & (POSIX path of capturesPath))
+
+do shell script "while true; do rsync -aP 'rsync://{{hostname}}/share' '" & (POSIX path of capturesPath) & "'; sleep 10; done"
+
+display notification ("Finished synchronization")

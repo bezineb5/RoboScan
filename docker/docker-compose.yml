@@ -1,28 +1,26 @@
-version: '3.6'
+version: "3.6"
 services:
   frontend:
-    depends_on: 
+    depends_on:
       - roboscan
     build: ../scanner-frontend/
     restart: unless-stopped
-    ports: 
+    ports:
       - 80:80
     read_only: true
-    tmpfs: 
+    tmpfs:
       - /var/cache/nginx
-      - /run  # Note that there's a symbolic link /var/run -> /run
+      - /run # Note that there's a symbolic link /var/run -> /run
     volumes:
-      - /home/pi/share:/share:ro
-      - /home/pi/archive:/archive:ro
+      - /home/pi/storage/share:/share:ro
+      - /home/pi/storage/archive:/archive:ro
   roboscan:
     build: ../src/
     restart: unless-stopped
-    ports: 
-      - 5000:5000
     read_only: true
     volumes:
-      - /home/pi/share:/share
-      - /home/pi/archive:/archive
+      - /home/pi/storage:/storage
+      - /home/pi/configuration:/configuration
       - /dev/bus/usb/:/dev/bus/usb
     privileged: true
   rsyncd:
@@ -30,14 +28,14 @@ services:
     ports:
       - "873:873"
     volumes:
-      - /home/pi/share:/share:ro
+      - /home/pi/storage/share:/share:ro
     read_only: true
-    tmpfs: 
-      - /run  # Note that there's a symbolic link /var/run -> /run
+    tmpfs:
+      - /run # Note that there's a symbolic link /var/run -> /run
     restart: unless-stopped
   samba:
     image: dperson/samba
-    environment: 
+    environment:
       SHARE: "share;/share"
       SHARE1: "archive;/archive"
     ports:
@@ -50,5 +48,5 @@ services:
       - /tmp
     restart: unless-stopped
     volumes:
-      - /home/pi/share:/share
-      - /home/pi/archive:/archive
+      - /home/pi/storage/share:/share
+      - /home/pi/storage/archive:/archive

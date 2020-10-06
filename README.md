@@ -3,13 +3,21 @@ This is the source code for a Lego+Raspberry Pi-powered analog film roll scanner
 [![RoboScan](http://img.youtube.com/vi/FegPnVco0Qc/0.jpg)](https://youtu.be/FegPnVco0Qc)
 
 ## Installation
-You'll need python3 with pip installed.
-First, install gphoto2 using the [gPhoto2 Updater](https://github.com/gonzalo/gphoto2-updater).
-Then clone this repository and install the dependencies:
+First build the Angular frontend:
 ```bash
-git clone https://github.com/bezineb5/RoboScan
-cd RoboScan
-pip3 install -r requirements.txt
+cd scanner-frontend
+npm install
+ng build --prod
+cd ..
+```
+
+Then deploy the docker-compose:
+```bash
+cd docker
+# Adjsut the hostname to your Raspberry Pi
+export DOCKER_HOST=tcp://piscanner:2376 DOCKER_TLS_VERIFY=
+docker-compose up -d --build
+cd ..
 ```
 
 ## Starting it

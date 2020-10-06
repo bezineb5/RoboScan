@@ -1,31 +1,309 @@
 <mat-toolbar color="primary">
   <span>{{title}}</span>
-  <span class="example-spacer"></span>
+  <span class="toolbar-spacer"></span>
+  <button mat-icon-button [matMenuTriggerFor]="storageMenu" aria-label="Storage menu">
+    <mat-icon>sd_storage</mat-icon>
+  </button>
+  <button mat-icon-button [matMenuTriggerFor]="connectivityMenu" aria-label="Connectivity menu">
+    <mat-icon>developer_mode</mat-icon>
+  </button>
   <button mat-raised-button color="warn" (click)="onCancel()">Cancel</button>
 </mat-toolbar>
 
+<mat-menu #storageMenu="matMenu">
+  <a mat-menu-item href="/share/" target="_blank">
+    <mat-icon>camera_roll</mat-icon>
+    <span>Photo Storage</span>
+  </a>
+  <a mat-menu-item href="/archive/" target="_blank">
+    <mat-icon>folder</mat-icon>
+    <span>Archive</span>
+  </a>
+  <mat-divider></mat-divider>
+  <button mat-menu-item (click)="moveToArchive()">
+    <mat-icon>archive</mat-icon>
+    <span>Move to archive</span>
+  </button>
+  <button mat-menu-item (click)="onDeleteArchive()">
+    <mat-icon>delete</mat-icon>
+    <span>Delete archive</span>
+  </button>
+</mat-menu>
+
+<mat-menu #connectivityMenu="matMenu">
+  <button mat-menu-item (click)="showCaptureOneHelp()">
+    <mat-icon>get_app</mat-icon>
+    <span>Capture One Script</span>
+  </button>
+  <mat-divider></mat-divider>
+  <button mat-menu-item (click)="showSambaHelp()">
+    <mat-icon>storage</mat-icon>
+    <span>Network Share</span>
+  </button>
+  <button mat-menu-item (click)="showRsyncHelp()">
+    <mat-icon>sync</mat-icon>
+    <span>rsync</span>
+  </button>
+  <button mat-menu-item (click)="showDockerHelp()">
+    <mat-icon>widgets</mat-icon>
+    <span>Docker</span>
+  </button>
+  <mat-divider></mat-divider>
+  <a mat-menu-item href="/doc/" target="_blank">
+    <mat-icon>http</mat-icon>
+    <span>OpenAPI Specifications</span>
+  </a>
+  <a mat-menu-item href="http://analogexif.sourceforge.net/help/analogexif-xmp.php" target="_blank">
+    <mat-icon>open_in_new</mat-icon>
+    AnalogExif XMP Schema
+  </a>
+</mat-menu>
 
 <mat-horizontal-stepper linear #scannerstepper>
   <mat-step [stepControl]="settingsGroup" [editable]="false">
     <ng-template matStepLabel>Before starting</ng-template>
-    <p>Put the film in the machine.</p>
-    <p>Plug the camera.</p>
-    <p>Turn the camera on in tethered mode.</p>
+
+    <mat-accordion class="accordion-headers-align" multi>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon>looks_one</mat-icon>
+            Connect the camera
+          </mat-panel-title>
+          <mat-panel-description>
+            Put it in tether mode
+            <mat-icon>linked_camera</mat-icon>
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <p>Plug the camera.</p>
+        <p>Turn the camera on in tethered mode.</p>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel [expanded]="true">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon>looks_two</mat-icon>
+            Camera settings
+          </mat-panel-title>
+          <mat-panel-description>
+            Adjust to your digital camera settings
+            <mat-icon>camera</mat-icon>
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+
+        <p>
+          Number of files to download per photo:
+          <mat-button-toggle-group #maxNumberOfFilesGroup="matButtonToggleGroup" [(value)]="maxNumberOfFiles">
+            <mat-button-toggle value="0" aria-label="0 (none)">
+              0 (none)
+            </mat-button-toggle>
+            <mat-button-toggle value="1" aria-label="1 (RAW or JPG)">
+              1 (RAW or JPG)
+            </mat-button-toggle>
+            <mat-button-toggle value="2" aria-label="2 (RAW and JPG)">
+              2 (RAW and JPG)
+            </mat-button-toggle>
+            <mat-button-toggle value="3" aria-label="3 (2 RAWs and JPG)">
+              3 (2 RAWs and 1 JPG)
+            </mat-button-toggle>
+          </mat-button-toggle-group>
+        </p>
+
+        <p>
+          <mat-slide-toggle [(ngModel)]="deletePhotoAfterDownload">
+            Delete photos after download
+          </mat-slide-toggle>
+        </p>
+
+      </mat-expansion-panel>
+      <mat-expansion-panel [expanded]="true">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon>looks_3</mat-icon>
+            Metadata
+          </mat-panel-title>
+          <mat-panel-description>
+            AnalogExif information to add to each photo
+            <mat-icon>insert_comment</mat-icon>
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+
+        <form>
+          <h3>Frame numbering</h3>
+          <p>
+            <mat-form-field>
+              <mat-label>Frame number of the first photo</mat-label>
+              <mat-select [formControl]="initialFrameCountControl">
+                <mat-option value="">Undefined</mat-option>
+                <mat-option *ngFor="let fcount of frameCounts" [value]="fcount">
+                  {{fcount}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </p>
+
+          <h3>Lens</h3>
+          <p>
+            <mat-form-field>
+              <mat-label>Lens Serial Number</mat-label>
+              <input matInput [formControl]="lensSerialNumberControl">
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Filter</mat-label>
+              <input matInput [formControl]="filterControl">
+            </mat-form-field>
+          </p>
+
+          <h3>Film</h3>
+          <p>
+            <mat-form-field>
+              <mat-label>Film Type</mat-label>
+              <mat-select [formControl]="filmTypeControl">
+                <mat-option value="">Undefined</mat-option>
+                <mat-option *ngFor="let ftype of filmTypes" [value]="ftype">
+                  {{ftype}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Film</mat-label>
+              <input matInput [matAutocomplete]="autoFilms" [formControl]="filmControl">
+              <mat-autocomplete autoActiveFirstOption #autoFilms="matAutocomplete"
+                (optionSelected)="onFilmAutocompleteSelected($event)" [displayWith]="displayFilmName">
+                <mat-option *ngFor="let film of filteredFilms | async" [value]="film">
+                  {{film.fullname}}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Film Maker</mat-label>
+              <input matInput [matAutocomplete]="autoFilmMakers"
+                [formControl]="filmMakersControl">
+              <mat-autocomplete autoActiveFirstOption #autoFilmMakers="matAutocomplete">
+                <mat-option *ngFor="let fm of filteredFilmMakers | async" [value]="fm">
+                  {{fm}}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Film Alias</mat-label>
+              <input matInput [formControl]="filmAliasControl">
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Film Grain</mat-label>
+              <input matInput type="number" [formControl]="filmGrainControl">
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Roll Identifier</mat-label>
+              <input matInput [formControl]="rollIdControl">
+            </mat-form-field>
+          </p>
+
+          <h3>Development</h3>
+          <p>
+            <mat-form-field>
+              <mat-label>Develop Process</mat-label>
+              <input matInput [matAutocomplete]="autoDevelopProcesses"
+                [formControl]="developProcessesControl">
+              <mat-autocomplete autoActiveFirstOption #autoDevelopProcesses="matAutocomplete">
+                <mat-option *ngFor="let dp of filteredDevelopProcesses | async" [value]="dp">
+                  {{dp}}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Developer</mat-label>
+              <input matInput [formControl]="developerControl">
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Developer Maker</mat-label>
+              <input matInput [formControl]="developerMakerControl">
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Developer Dilution</mat-label>
+              <input matInput [formControl]="developerDilutionControl">
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Develop Time</mat-label>
+              <input matInput [formControl]="developTimeControl">
+            </mat-form-field>
+          </p>
+
+          <h3>Lab</h3>
+          <p>
+            <mat-form-field>
+              <mat-label>Lab</mat-label>
+              <input matInput [formControl]="labControl">
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Lab Address</mat-label>
+              <input matInput [formControl]="labAddressControl">
+            </mat-form-field>
+          </p>
+
+        </form>
+      </mat-expansion-panel>
+    </mat-accordion>
+
     <div>
       <button mat-button color="primary" (click)="onReadyToStart()">Ready to start</button>
     </div>
   </mat-step>
   <mat-step [editable]="false">
     <ng-template matStepLabel>Calibration</ng-template>
-    <div>
-      <p>
-        Align the photo in the viewfinder. Move at least by 1 hole for calibration.
-      </p>
-      <button mat-raised-button *ngFor="let item of [1,2,3,4,5,6,7,8]" (click)="onSkipHoles(item)">{{item}}</button>
-    </div>
+
+    <mat-accordion class="accordion-headers-align" multi>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon>looks_one</mat-icon>
+            Insert the film
+          </mat-panel-title>
+          <mat-panel-description>
+            Prepare the roll
+            <mat-icon>camera_roll</mat-icon>
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <p>Insert the film.</p>
+        <p>Attach it.</p>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon>looks_two</mat-icon>
+            Adjust exposure
+          </mat-panel-title>
+          <mat-panel-description>
+            Using a blank frame
+            <mat-icon>exposure</mat-icon>
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <p>Insert the film.</p>
+        <p>Attach it.</p>
+      </mat-expansion-panel>
+
+      <mat-expansion-panel [expanded]="true">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <mat-icon>looks_3</mat-icon>
+            Move to the first photo
+          </mat-panel-title>
+          <mat-panel-description>
+            Calibrate the initial position
+            <mat-icon>fast_forward</mat-icon>
+          </mat-panel-description>
+        </mat-expansion-panel-header>
+        <p>
+          Align the photo in the viewfinder. Move at least by 1 hole for calibration.
+        </p>
+        <button mat-raised-button *ngFor="let item of [1,2,3,4,5,6,7,8]" (click)="onSkipHoles(item)">{{item}}</button>
+      </mat-expansion-panel>
+    </mat-accordion>
+
     <div>
       <button mat-button (click)="onResetCamera()">Reconnect camera</button>
-      <button mat-button color="primary" (click)="onStartScanning()">Start scanning</button>
+      <button mat-button color="primary" (click)="onStartScanning()" [disabled]="isMovingFiles">Start scanning</button>
       <button mat-button color="warn" (click)="onCancel()">Cancel</button>
     </div>
   </mat-step>

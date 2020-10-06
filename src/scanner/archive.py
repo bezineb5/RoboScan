@@ -16,8 +16,7 @@ class Archive:
         count = 0
 
         for f in self.photos_path.glob('*.*'):
-            shutil.copy2(str(f), str(self.archive_path / f.name))
-            f.unlink()
+            shutil.move(str(f), str(self.archive_path / f.name))
             count += 1
         return count
 

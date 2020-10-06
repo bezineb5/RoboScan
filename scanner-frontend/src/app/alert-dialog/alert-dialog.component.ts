@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 export interface AlertDialogData {
   title: string;
@@ -11,8 +11,7 @@ export interface AlertDialogData {
   templateUrl: './alert-dialog.component.html',
 })
 export class AlertDialogComponent {
+  closeButtonText = "Close";
 
-  message: string = ""
-  closeButtonText = "Close"
   constructor(@Inject(MAT_DIALOG_DATA) public data: AlertDialogData) {}
 }
