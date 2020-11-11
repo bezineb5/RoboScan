@@ -1,38 +1,47 @@
 from dataclasses import dataclass
 import logging
+from logging import info
 from pathlib import Path
 import pathlib
 import random
 import threading
-from typing import Any, Callable, Dict, List, Optional
-from scanner.frame_counter import FrameCounter
-
-from scanner.metadata import MetaData
-
-from . import scanner
-from .hardware import camera
 import shutil
+from typing import Any, Callable, Dict, List, Optional
+
+from dataclasses_json import dataclass_json
+
+from scanner.frame_counter import FrameCounter
+from scanner.metadata import MetaData
+from scanner.scanner_device import CanSkipHoles, PhotoInfo
+from . import scanner_device
+from .hardware import camera
 
 log = logging.getLogger(__name__)
 
 
+@dataclass_json
 @dataclass(frozen=True)
 class SessionSettings:
-    destination_storage: pathlib.Path
     metadata: Optional[MetaData]
     initial_frame: Optional[FrameCounter]
     max_number_of_files: int = 1
     delete_photo_after_download: bool = False
 
 
+class SessionDoesNotExist(Exception):
+    def __init__(self, message):
+        self.message = message
+
+
 class Session:
     __slots__ = ['id', '_camera', '_scanner', '_callback', '_settings',
                  '_is_scanning', '_files_per_photo', '_current_frame',
-                 '_exif_tagger', ]
+                 '_exif_tagger', '_destination_storage', ]
 
     def __init__(self,
                  the_camera: camera.Camera,
-                 the_scanner: scanner.Scanner,
+                 the_scanner: scanner_device.Scanner,
+                 destination_storage: pathlib.Path,
                  settings: SessionSettings,
                  callback: Callable[[str, Any], None],
                  exif_tagger: Callable[[Path, MetaData, Callable[[Path], None]], None]) -> None:
@@ -42,6 +51,7 @@ class Session:
         self._camera = the_camera
         self._scanner = the_scanner
         self._exif_tagger = exif_tagger
+        self._destination_storage = destination_storage
         self._settings = settings
         self._current_frame = settings.initial_frame
         self._is_scanning = False
@@ -64,10 +74,10 @@ class Session:
             })
             # self.stop()
 
-        def on_photo(index: int):
+        def on_photo(info: PhotoInfo):
             # Closure: capture the values for later use
             frame_count = self._current_frame
-            destination_path = self._settings.destination_storage
+            destination_path = self._destination_storage
 
             def move_to_destination_callback(file: Path):
                 if file:
@@ -78,6 +88,8 @@ class Session:
                 if metadata is None:
                     return
                 frame_metadata = metadata.with_frame_count(frame_count)
+                if info.crop:
+                    frame_metadata = frame_metadata.with_crop(info.crop)
 
                 # Notify the exif tagger to write that info into the file
                 self._exif_tagger(file, frame_metadata, move_to_destination_callback)
@@ -96,7 +108,7 @@ class Session:
                            {
                                "event": "scanned_photo",
                                "id": self.id,
-                               "data": index,
+                               "data": info.index,
                            })
 
         def on_scan_finished(count: int):
@@ -118,7 +130,14 @@ class Session:
         self._scanner.on_session_stop = on_stop
 
     def start_scan_async(self):
-        threading.Thread(target=lambda: self._scanner.scan_roll()).start()
+        def scan():
+            try:
+                self._scanner.scan_roll()
+            except:
+                log.exception("Unable to scan roll")
+                self._scanner.stop_session()
+
+        threading.Thread(target=scan).start()
         self._is_scanning = True
         self._callback("session",
                        {
@@ -127,8 +146,9 @@ class Session:
                        })
 
     def skip_holes_async(self, number_of_holes: int):
-        threading.Thread(target=lambda n: self._scanner.skip_holes(
-            n), args=(number_of_holes,)).start()
+        if isinstance(self._scanner, CanSkipHoles):
+            threading.Thread(target=lambda n: self._scanner.skip_holes(
+                n), args=(number_of_holes,)).start()
 
     def stop(self):
         if self.id in SESSIONS:
@@ -141,13 +161,21 @@ class Session:
     def is_scanning(self) -> bool:
         return self._is_scanning
 
+    @property
+    def support_hole_skipping(self) -> bool:
+        return isinstance(self._scanner, scanner_device.CanSkipHoles)
+
 
 def get_session(id: int) -> Session:
-    return SESSIONS[id]
+    session = SESSIONS.get(id)
+    if session is None:
+        raise SessionDoesNotExist(f"Session not found: {id}")
+    return session
 
 
 def get_or_new_session(the_camera: camera.Camera,
-                       the_scanner: scanner.Scanner,
+                       the_scanner: scanner_device.Scanner,
+                       destination_storage: pathlib.Path,
                        settings: SessionSettings,
                        callback: Callable[[str, Any], None],
                        exif_tagger: Callable[[Path, MetaData, Callable[[Path], None]], None]) -> Session:
@@ -158,7 +186,7 @@ def get_or_new_session(the_camera: camera.Camera,
         return SESSIONS[key]
 
     # No existing session, create a new one
-    new_session = Session(the_camera, the_scanner,
+    new_session = Session(the_camera, the_scanner, destination_storage,
                           settings, callback, exif_tagger)
     SESSIONS[new_session.id] = new_session
     return new_session

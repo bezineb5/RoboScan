@@ -1,0 +1,5 @@
+background
+partial_photo
+hole
+separator
+photo

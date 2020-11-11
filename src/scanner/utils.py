@@ -1,8 +1,6 @@
 import argparse
 import json
-from typing import Any, Optional, Type
-
-from .hardware import camera
+from typing import Any, Optional
 
 import requests
 
@@ -11,7 +9,7 @@ def notify_ifttt(ifttt_key: Optional[str], action: str, value1: Any=None, value2
     if not ifttt_key:
         return
 
-    url = "https://maker.ifttt.com/trigger/{action}/with/key/{key}".format(action=action, key=ifttt_key)
+    url = f"https://maker.ifttt.com/trigger/{action}/with/key/{ifttt_key}"
     payload = {
         "value1" : value1,
         "value2" : value2,
@@ -22,16 +20,17 @@ def notify_ifttt(ifttt_key: Optional[str], action: str, value1: Any=None, value2
     r.raise_for_status()
 
 
-def parse_arguments(is_webserver: bool=False) -> argparse.Namespace:
+def parse_arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description='Film automatic scanner')
+        description='Roboscan: Automatic film scanner')
 
+    # Debugging
     parser.add_argument('--verbose', '-v', action='store_true',
                         help='Verbose mode')
     parser.add_argument('--dryrun', action='store_true',
-                        help='Dry run without camera camera')
-    #parser.add_argument('--port', default='5000', type=int, help='Server port to listen to')
-    #parser.add_argument('--steps', '-s', default='128', type=int, help='Number of steps per rotation')
+                        help='Dry run without camera')
+
+    # Hardware configuration
     parser.add_argument('--pin1', '-p1', default='5', type=int, help='BCM pin for IN1')
     parser.add_argument('--pin2', '-p2', default='6', type=int, help='BCM pin for IN2')
     parser.add_argument('--pin3', '-p3', default='13', type=int, help='BCM pin for IN3')
@@ -41,20 +40,18 @@ def parse_arguments(is_webserver: bool=False) -> argparse.Namespace:
     parser.add_argument('--buttonstart', '-s', default='20', type=int, help='BCM pin for the start button')
     parser.add_argument('--buttonskip', '-k', default='21', type=int, help='BCM pin for the skip button')
     parser.add_argument('--infrared', '-ir', action='store_true', help='Use infrared LED')
+    parser.add_argument('--use_edge_tpu', '-tpu', action='store_true', help='Use Coral Edge TPU')
 
+    # Storage paths
     parser.add_argument('--destination', '-d', default='/share', type=str, help='Destination path')
+    parser.add_argument('--archive', '-a', default='/archive', type=str, help='Archive path')
+    parser.add_argument('--temp', '-t', default='/tmp', type=str, help='Temporary path')
+    parser.add_argument('--settings', default='/configuration/settings.json', type=str, help='Settings storage file')
+
+    # Web server configuration 
+    parser.add_argument('--port', default='5000', type=int, help='Server port to listen to')
+
+    # IFTTT
     parser.add_argument('--ifttt', type=str, help='IFTTT key to call webhooks')
 
-    if is_webserver:
-        # Web server only
-        parser.add_argument('--port', default='5000', type=int, help='Server port to listen to')
-        parser.add_argument('--archive', '-a', default='/archive', type=str, help='Archive path')
-        parser.add_argument('--temp', '-t', default='/tmp', type=str, help='Temporary path')
-
     return parser.parse_args()
-
-
-def get_camera_type(dry_run: bool) -> Type[camera.Camera]:
-    if dry_run:
-        return camera.FakeCamera
-    return camera.Camera

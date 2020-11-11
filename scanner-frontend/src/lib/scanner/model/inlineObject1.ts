@@ -11,18 +11,7 @@
  */
 
 
-export interface SessionDetails { 
-    /**
-     * Session ID
-     */
-    id: number;
-    /**
-     * True if a scan is on-going
-     */
-    is_scanning: boolean;
-    /**
-     * True if the scanner supports skipping holes
-     */
-    feature_skip_hole: boolean;
+export interface InlineObject1 { 
+    value?: string;
 }
 

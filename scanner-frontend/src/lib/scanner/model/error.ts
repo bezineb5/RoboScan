@@ -1,6 +1,6 @@
 /**
- * PiScanner API
- * PiScanner API
+ * RoboScan API
+ * RoboScan API
  *
  * The version of the OpenAPI document: 1.0
  * 

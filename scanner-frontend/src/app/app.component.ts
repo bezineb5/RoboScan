@@ -6,7 +6,7 @@ import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 
-import { ScannerService, InlineObject, Film } from '../lib/scanner';
+import { ScannerService, InlineObject4 } from '../lib/scanner';
 import { BASE_PATH as ScannerApiUrl } from '../lib/scanner/variables';
 import { environment } from 'src/environments/environment';
 import { CameraStreamService, SessionEvent } from './camera-stream.service';
@@ -36,7 +36,9 @@ export class AppComponent {
   private readonly StepFinished = 3;
 
   private sessionId: number = undefined;
-  scannedPhotoCount: number = undefined;
+  scannedPhotoCount: number = 0;
+  // Show the "skip holes" feature?
+  featureSkipHole: boolean = true;
 
   // Is a file move operation on-going? It will disable the start of a scan
   isMovingFiles: boolean = false;
@@ -67,11 +69,21 @@ export class AppComponent {
   labAddressControl = new FormControl("");
   filterControl = new FormControl("");
 
-
   filmTypes: string[];
   frameCounts: string[];
   films: FilmAutocomplete[];
   filmMakers: string[];
+
+  // Camera settings
+  cameraIsoControl = new FormControl("");
+  cameraApertureControl = new FormControl("");
+  cameraShutterSpeedControl = new FormControl("");
+  cameraExposureCompensationControl = new FormControl("");
+
+  isoChoices: string[];
+  apertureChoices: string[];
+  shutterSpeedChoices: string[];
+  exposureCompensationChoices: string[];
 
 
   @ViewChild('scannerstepper')
@@ -81,6 +93,7 @@ export class AppComponent {
 
   ngOnInit() {
     this.initAutoComplete();
+    this.getLastUsedSettings();
 
     // Init existing session
     this.scannerApi.listSessions().subscribe(s => {
@@ -94,7 +107,7 @@ export class AppComponent {
             this.stepper.selectedIndex = this.StepScanning;
           } else {
             // Session started, but no scanning
-            this.scannedPhotoCount = undefined;
+            this.scannedPhotoCount = 0;
             this.stepper.selectedIndex = this.StepCalibrate;
           }
         });
@@ -147,7 +160,7 @@ export class AppComponent {
 
     // Films
     this.scannerApi.listFilm().subscribe(data => {
-      this.films = data.map((v, _i, _a) => { return {'make':v.make, 'fullname': v.make + ' ' + v.name} });
+      this.films = data.map((v, _i, _a) => { return { 'make': v.make, 'fullname': v.make + ' ' + v.name } });
       const extractFilmMakers = data.map((v, _i, _a) => v.make);
       this.filmMakers = Array.from(new Set(extractFilmMakers))
       this.filteredFilms = this.buildFilteredFilmAutocomplete(this.filmControl, this.films);
@@ -155,11 +168,72 @@ export class AppComponent {
     }, err => {
       console.log(err);
       const data = [{ "make": "KODAK", "name": "Gold 200" }, { "make": "FUJI", "name": "C200" }];
-      this.films = data.map((v, _i, _a) => { return {'make':v.make, 'fullname': v.make + ' ' + v.name} });
+      this.films = data.map((v, _i, _a) => { return { 'make': v.make, 'fullname': v.make + ' ' + v.name } });
       this.filmMakers = data.map((v, _i, _a) => v.make);
       this.filteredFilms = this.buildFilteredFilmAutocomplete(this.filmControl, this.films);
       this.filteredFilmMakers = this.buildFilteredAutocomplete(this.filmMakersControl, this.filmMakers);
     });
+
+    // Camera settings
+    this.cameraExposureCompensationControl.valueChanges.subscribe(
+      v => {
+        this.scannerApi.setExposureCompensation({value: v}).subscribe(
+          d => console.log(d),
+          e => console.log(e)
+        );
+      }
+    );
+    this.cameraIsoControl.valueChanges.subscribe(
+      v => {
+        this.scannerApi.setIso({value: v}).subscribe(
+          d => console.log(d),
+          e => console.log(e)
+        );
+      }
+    );
+    this.cameraApertureControl.valueChanges.subscribe(
+      v => {
+        this.scannerApi.setAperture({value: v}).subscribe(
+          d => console.log(d),
+          e => console.log(e)
+        );
+      }
+    );
+    this.cameraShutterSpeedControl.valueChanges.subscribe(
+      v => {
+        this.scannerApi.setShutterSpeed({value: v}).subscribe(
+          d => console.log(d),
+          e => console.log(e)
+        );
+      }
+    );
+  }
+
+  private getLastUsedSettings() {
+    this.scannerApi.getLastUsedSettings().subscribe(
+      data => {
+        this.maxNumberOfFiles = data.max_number_of_files.toString();
+        this.deletePhotoAfterDownload = data.delete_photo_after_download;
+
+        this.initialFrameCountControl.setValue(data.initial_frame, {emitEvent: false});
+        this.developProcessesControl.setValue(data.metadata_develop_process, {emitEvent: false});
+        this.developTimeControl.setValue(data.metadata_develop_time, {emitEvent: false});
+        this.developerControl.setValue(data.metadata_developer, {emitEvent: false});
+        this.developerDilutionControl.setValue(data.metadata_developer_dilution, {emitEvent: false});
+        this.developerMakerControl.setValue(data.metadata_developer_maker, {emitEvent: false});
+        this.filmControl.setValue(data.metadata_film, {emitEvent: false});
+        this.filmAliasControl.setValue(data.metadata_film_alias, {emitEvent: false});
+        this.filmGrainControl.setValue(data.metadata_film_grain, {emitEvent: false});
+        this.filmMakersControl.setValue(data.metadata_film_maker, {emitEvent: false});
+        this.filmTypeControl.setValue(data.metadata_film_type, {emitEvent: false});
+        this.filterControl.setValue(data.metadata_filter, {emitEvent: false});
+        this.labControl.setValue(data.metadata_lab, {emitEvent: false});
+        this.labAddressControl.setValue(data.metadata_lab_address, {emitEvent: false});
+        this.lensSerialNumberControl.setValue(data.metadata_lens_serial_number, {emitEvent: false});
+        this.rollIdControl.setValue(data.metadata_roll_id, {emitEvent: false});
+      },
+      e => console.log(e)
+    );
   }
 
   private onSessionEvent(message: SessionEvent) {
@@ -168,12 +242,12 @@ export class AppComponent {
     switch (message.event) {
       case this.cameraStreamService.SessionStart:
         this.sessionId = message.id;
-        this.scannedPhotoCount = undefined;
+        this.scannedPhotoCount = 0;
         this.stepper.selectedIndex = this.StepCalibrate;
         break;
       case this.cameraStreamService.SessionStop:
         this.sessionId = undefined;
-        this.scannedPhotoCount = undefined;
+        this.scannedPhotoCount = 0;
         this.stepper.selectedIndex = this.StepFinished;
         break;
       case this.cameraStreamService.ScanStarted:
@@ -189,7 +263,7 @@ export class AppComponent {
   }
 
   onReadyToStart() {
-    const metadata: InlineObject = {
+    const metadata: InlineObject4 = {
       'max_number_of_files': parseInt(this.maxNumberOfFiles, 10),
       'delete_photo_after_download': this.deletePhotoAfterDownload,
       'initial_frame': this.initialFrameCountControl.value,
@@ -214,6 +288,11 @@ export class AppComponent {
       this.scannerApi.initSession(metadata).subscribe(data => {
         console.log(data);
 
+        this.featureSkipHole = data.feature_skip_hole;
+
+        // Retrieve the camera settings
+        this.getCameraSettingsChoices();
+
         // Move previous session to archive
         this.moveToArchive();
       }, err => {
@@ -224,6 +303,64 @@ export class AppComponent {
       this.sessionId = 12345;
       this.stepper.next();
     }
+  }
+
+  getCameraSettingsChoices() {
+    // ISO
+    this.scannerApi.listIso().subscribe(data => {
+      console.log(data);
+      this.isoChoices = data.map((v, _i, _a) => v.value);
+      
+      let last_used_array = data.filter((v, _i, _a) => v.last_used == true);
+      if (last_used_array.length > 0) {
+        this.cameraIsoControl.setValue(last_used_array[0].value);
+      }
+    }, err => {
+      console.log(err);
+      this.openDialog("Error", err.error.message);
+    });
+
+    // Aperture
+    this.scannerApi.listAperture().subscribe(data => {
+      console.log(data);
+      this.apertureChoices = data.map((v, _i, _a) => v.value);
+
+      let last_used_array = data.filter((v, _i, _a) => v.last_used == true);
+      if (last_used_array.length > 0) {
+        this.cameraApertureControl.setValue(last_used_array[0].value);
+      }
+    }, err => {
+      console.log(err);
+      this.openDialog("Error", err.error.message);
+    });
+
+    // Shutter speed
+    this.scannerApi.listShutterSpeed().subscribe(data => {
+      console.log(data);
+      this.shutterSpeedChoices = data.map((v, _i, _a) => v.value);
+
+      let last_used_array = data.filter((v, _i, _a) => v.last_used == true);
+      if (last_used_array.length > 0) {
+        this.cameraShutterSpeedControl.setValue(last_used_array[0].value);
+      }
+    }, err => {
+      console.log(err);
+      this.openDialog("Error", err.error.message);
+    });
+
+    // Exposure compensation
+    this.scannerApi.listExposureCompensation().subscribe(data => {
+      console.log(data);
+      this.exposureCompensationChoices = data.map((v, _i, _a) => v.value);
+
+      let last_used_array = data.filter((v, _i, _a) => v.last_used == true);
+      if (last_used_array.length > 0) {
+        this.cameraExposureCompensationControl.setValue(last_used_array[0].value);
+      }
+    }, err => {
+      console.log(err);
+      this.openDialog("Error", err.error.message);
+    });
   }
 
   moveToArchive() {
@@ -268,10 +405,11 @@ export class AppComponent {
     if (this.sessionId && environment.production) {
       this.scannerApi.stopSession(this.sessionId).subscribe(data => {
         console.log(data);
+        this.stepper.reset();
       }, err => {
         console.log(err);
-        this.sessionId = undefined;
-        this.stepper.reset();
+        // Refresh the page to reconnect with the active session, if any
+        window.location.reload();
       });
     } else {
       this.sessionId = undefined;
@@ -339,7 +477,7 @@ export class AppComponent {
 
   private _filterFilm(optionsList: FilmAutocomplete[], value: string | FilmAutocomplete): FilmAutocomplete[] {
     const filterValue = (<string>value).toLowerCase();
-    
+
     return optionsList.filter(option => option.fullname.toLowerCase().indexOf(filterValue) >= 0);
   }
 
@@ -351,7 +489,7 @@ export class AppComponent {
     );
   };
 
-  displayFilmName(film: FilmAutocomplete|string): string {
+  displayFilmName(film: FilmAutocomplete | string): string {
     if (typeof film == 'string') {
       return film;
     }

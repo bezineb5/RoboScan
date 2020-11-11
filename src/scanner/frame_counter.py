@@ -1,6 +1,9 @@
 from __future__ import annotations
+from dataclasses import dataclass
 from functools import total_ordering
 from typing import List, Optional
+
+from dataclasses_json import dataclass_json
 
 
 SPECIAL_FRAME_NAMES = {
@@ -9,14 +12,10 @@ SPECIAL_FRAME_NAMES = {
 
 
 @total_ordering
+@dataclass_json
+@dataclass(frozen=True)
 class FrameCounter:
-    __slots__ = ['current_frame_index', ]
-
-    def __init__(self, as_index: int) -> None:
-        if as_index is not None:
-            self.current_frame_index = as_index
-        else:
-            self.current_frame_index = 0
+    current_frame_index: int = 0
 
     def next(self) -> FrameCounter:
         return FrameCounter(self.current_frame_index + 1)

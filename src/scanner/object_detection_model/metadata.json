@@ -1,0 +1,23 @@
+{
+    "inferenceType": "QUANTIZED_UINT8",
+    "inputShape": [
+        1,
+        192,
+        192,
+        3
+    ],
+    "inputTensor": "normalized_input_image_tensor",
+    "maxDetections": 40,
+    "outputTensorRepresentation": [
+        "bounding_boxes",
+        "class_labels",
+        "class_confidences",
+        "num_of_boxes"
+    ],
+    "outputTensors": [
+        "TFLite_Detection_PostProcess",
+        "TFLite_Detection_PostProcess:1",
+        "TFLite_Detection_PostProcess:2",
+        "TFLite_Detection_PostProcess:3"
+    ]
+}

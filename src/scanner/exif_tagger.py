@@ -1,3 +1,4 @@
+import collections
 import dataclasses
 import logging
 import os
@@ -8,11 +9,9 @@ from typing import Callable, List
 
 import exiftool
 
-from . import exif, metadata
+from . import metadata
 
 log = logging.getLogger(__name__)
-
-_ANALOG_EXIF_CONFIG = str(exif.get_analogexif_config())
 
 TAG_MAPPING = {
     "exposure_number": "ExposureNumber",
@@ -31,6 +30,7 @@ TAG_MAPPING = {
     "lab": "Lab",
     "lab_address": "LabAddress",
     "filter": "Filter",
+    "crop": "DefaultUserCrop",
 }
 
 
@@ -43,24 +43,6 @@ def async_tagger() -> Callable[[Path, metadata.MetaData, Callable[[Path], None]]
         sync_queue.put((filename, mdata, post_action))
 
     return tag_file
-
-
-def _tagger_thread_test(sync_queue: queue.SimpleQueue):
-
-    while True:
-        filename, metadata, post_action = sync_queue.get()
-        log.info("Tagging file %s using Metadata: %s", filename, metadata)
-        params = _build_command_line(filename, metadata)
-
-        full_cmd_line = " ".join(['exiftool'] + params)
-        log.info("ExifTool command line: %s", full_cmd_line)
-
-        result = os.system(full_cmd_line)
-
-        log.info("ExifTool result: %s", result)
-
-        if post_action is not None:
-            post_action(filename)
 
 
 def _tagger_thread(sync_queue: queue.SimpleQueue):
@@ -90,9 +72,9 @@ def _build_command_line(filename: Path, mdata: metadata.MetaData) -> List[str]:
     data_dict = dataclasses.asdict(mdata)
     for key, v in data_dict.items():
         tag = TAG_MAPPING.get(key)
-        content = str(v) if v is not None else None
+        content = _format_content(v)
         if content and v != "" and tag:
-            params.append('-{tag}="{content}"'.format(tag=tag, content=content))
+            params.append(f'-{tag}="{content}"')
 
     params.append("-overwrite_original")
     params.append(str(filename))
@@ -100,3 +82,15 @@ def _build_command_line(filename: Path, mdata: metadata.MetaData) -> List[str]:
     log.info("ExifTool parameters: %s", params)
 
     return params
+
+
+def _format_content(value: str):
+    if value is None:
+        return None
+    elif isinstance(value, collections.abc.Sequence) and not isinstance(value, str):
+        # List, Tuple, ...
+        list_content = [_format_content(v) for v in value]
+        return " ".join(list_content)
+    else:
+        # str and non-iterable and not null
+        return str(value)

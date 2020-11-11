@@ -4,7 +4,7 @@ rpi.gpio==0.7.0
 gpiozero==1.5.1
 
 # Camera
-gphoto2==2.2.2
+gphoto2==2.2.4
 
 # ExifTool
 PyExifTool==0.1.1
@@ -18,3 +18,9 @@ requests==2.24.0
 
 # Configuration
 dataclasses-json==0.5.2
+
+# Tensorflow Lite (Python 3.8)
+numpy==1.19.3
+pillow==8.0.1
+#https://dl.google.com/coral/python/tflite_runtime-2.1.0.post1-cp38-cp38-linux_armv7l.whl
+https://dl.google.com/coral/python/tflite_runtime-2.1.0.post1-cp37-cp37m-linux_armv7l.whl

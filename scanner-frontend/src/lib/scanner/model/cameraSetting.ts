@@ -11,18 +11,18 @@
  */
 
 
-export interface SessionDetails { 
+export interface CameraSetting { 
     /**
-     * Session ID
+     * Camera setting value
      */
-    id: number;
+    value: string;
     /**
-     * True if a scan is on-going
+     * True if it is the currently active setting
      */
-    is_scanning: boolean;
+    active?: boolean;
     /**
-     * True if the scanner supports skipping holes
+     * True if it is the setting used last time
      */
-    feature_skip_hole: boolean;
+    last_used?: boolean;
 }
 

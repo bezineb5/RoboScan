@@ -17,14 +17,20 @@ import { HttpClient, HttpHeaders, HttpParams,
 import { CustomHttpParameterCodec }                          from '../encoder';
 import { Observable }                                        from 'rxjs';
 
+import { CameraSetting } from '../model/models';
 import { DevelopProcess } from '../model/models';
 import { FileOperationResult } from '../model/models';
 import { Film } from '../model/models';
 import { FilmType } from '../model/models';
 import { FrameCount } from '../model/models';
 import { InlineObject } from '../model/models';
+import { InlineObject1 } from '../model/models';
+import { InlineObject2 } from '../model/models';
+import { InlineObject3 } from '../model/models';
+import { InlineObject4 } from '../model/models';
 import { Session } from '../model/models';
 import { SessionDetails } from '../model/models';
+import { SessionSettings } from '../model/models';
 import { SkipHoles } from '../model/models';
 import { Status } from '../model/models';
 
@@ -139,6 +145,51 @@ export class ScannerService {
     }
 
     /**
+     * List of accepted values for the exposure compensation camera setting
+     * @param xFields An optional fields mask
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public getLastUsedSettings(xFields?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json'}): Observable<SessionSettings>;
+    public getLastUsedSettings(xFields?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json'}): Observable<HttpResponse<SessionSettings>>;
+    public getLastUsedSettings(xFields?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json'}): Observable<HttpEvent<SessionSettings>>;
+    public getLastUsedSettings(xFields?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json'}): Observable<any> {
+
+        let headers = this.defaultHeaders;
+        if (xFields !== undefined && xFields !== null) {
+            headers = headers.set('X-Fields', String(xFields));
+        }
+
+        let httpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
+        if (httpHeaderAcceptSelected === undefined) {
+            // to determine the Accept header
+            const httpHeaderAccepts: string[] = [
+                'application/json'
+            ];
+            httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        }
+        if (httpHeaderAcceptSelected !== undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+
+        let responseType: 'text' | 'json' = 'json';
+        if(httpHeaderAcceptSelected && httpHeaderAcceptSelected.startsWith('text')) {
+            responseType = 'text';
+        }
+
+        return this.httpClient.get<SessionSettings>(`${this.configuration.basePath}/scanner/session/last_used_settings/`,
+            {
+                responseType: <any>responseType,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
      * Starts a new scanning session
      * :raises camera.CameraException: In case of error when connecting to the camera
      * @param payload 
@@ -146,10 +197,10 @@ export class ScannerService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public initSession(payload: InlineObject, xFields?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json'}): Observable<Session>;
-    public initSession(payload: InlineObject, xFields?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json'}): Observable<HttpResponse<Session>>;
-    public initSession(payload: InlineObject, xFields?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json'}): Observable<HttpEvent<Session>>;
-    public initSession(payload: InlineObject, xFields?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json'}): Observable<any> {
+    public initSession(payload: InlineObject4, xFields?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json'}): Observable<SessionDetails>;
+    public initSession(payload: InlineObject4, xFields?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json'}): Observable<HttpResponse<SessionDetails>>;
+    public initSession(payload: InlineObject4, xFields?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json'}): Observable<HttpEvent<SessionDetails>>;
+    public initSession(payload: InlineObject4, xFields?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json'}): Observable<any> {
         if (payload === null || payload === undefined) {
             throw new Error('Required parameter payload was null or undefined when calling initSession.');
         }
@@ -186,8 +237,53 @@ export class ScannerService {
             responseType = 'text';
         }
 
-        return this.httpClient.post<Session>(`${this.configuration.basePath}/scanner/session/`,
+        return this.httpClient.post<SessionDetails>(`${this.configuration.basePath}/scanner/session/`,
             payload,
+            {
+                responseType: <any>responseType,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * List of accepted values for the aperture camera setting
+     * @param xFields An optional fields mask
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public listAperture(xFields?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json'}): Observable<Array<CameraSetting>>;
+    public listAperture(xFields?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json'}): Observable<HttpResponse<Array<CameraSetting>>>;
+    public listAperture(xFields?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json'}): Observable<HttpEvent<Array<CameraSetting>>>;
+    public listAperture(xFields?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json'}): Observable<any> {
+
+        let headers = this.defaultHeaders;
+        if (xFields !== undefined && xFields !== null) {
+            headers = headers.set('X-Fields', String(xFields));
+        }
+
+        let httpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
+        if (httpHeaderAcceptSelected === undefined) {
+            // to determine the Accept header
+            const httpHeaderAccepts: string[] = [
+                'application/json'
+            ];
+            httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        }
+        if (httpHeaderAcceptSelected !== undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+
+        let responseType: 'text' | 'json' = 'json';
+        if(httpHeaderAcceptSelected && httpHeaderAcceptSelected.startsWith('text')) {
+            responseType = 'text';
+        }
+
+        return this.httpClient.get<Array<CameraSetting>>(`${this.configuration.basePath}/scanner/camera/aperture/`,
             {
                 responseType: <any>responseType,
                 withCredentials: this.configuration.withCredentials,
@@ -233,6 +329,51 @@ export class ScannerService {
         }
 
         return this.httpClient.get<Array<DevelopProcess>>(`${this.configuration.basePath}/scanner/reference/develop_process/`,
+            {
+                responseType: <any>responseType,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * List of accepted values for the exposure compensation camera setting
+     * @param xFields An optional fields mask
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public listExposureCompensation(xFields?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json'}): Observable<Array<CameraSetting>>;
+    public listExposureCompensation(xFields?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json'}): Observable<HttpResponse<Array<CameraSetting>>>;
+    public listExposureCompensation(xFields?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json'}): Observable<HttpEvent<Array<CameraSetting>>>;
+    public listExposureCompensation(xFields?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json'}): Observable<any> {
+
+        let headers = this.defaultHeaders;
+        if (xFields !== undefined && xFields !== null) {
+            headers = headers.set('X-Fields', String(xFields));
+        }
+
+        let httpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
+        if (httpHeaderAcceptSelected === undefined) {
+            // to determine the Accept header
+            const httpHeaderAccepts: string[] = [
+                'application/json'
+            ];
+            httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        }
+        if (httpHeaderAcceptSelected !== undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+
+        let responseType: 'text' | 'json' = 'json';
+        if(httpHeaderAcceptSelected && httpHeaderAcceptSelected.startsWith('text')) {
+            responseType = 'text';
+        }
+
+        return this.httpClient.get<Array<CameraSetting>>(`${this.configuration.basePath}/scanner/camera/exposure_compensation/`,
             {
                 responseType: <any>responseType,
                 withCredentials: this.configuration.withCredentials,
@@ -379,6 +520,51 @@ export class ScannerService {
     }
 
     /**
+     * List of accepted values for the ISO camera setting
+     * @param xFields An optional fields mask
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public listIso(xFields?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json'}): Observable<Array<CameraSetting>>;
+    public listIso(xFields?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json'}): Observable<HttpResponse<Array<CameraSetting>>>;
+    public listIso(xFields?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json'}): Observable<HttpEvent<Array<CameraSetting>>>;
+    public listIso(xFields?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json'}): Observable<any> {
+
+        let headers = this.defaultHeaders;
+        if (xFields !== undefined && xFields !== null) {
+            headers = headers.set('X-Fields', String(xFields));
+        }
+
+        let httpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
+        if (httpHeaderAcceptSelected === undefined) {
+            // to determine the Accept header
+            const httpHeaderAccepts: string[] = [
+                'application/json'
+            ];
+            httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        }
+        if (httpHeaderAcceptSelected !== undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+
+        let responseType: 'text' | 'json' = 'json';
+        if(httpHeaderAcceptSelected && httpHeaderAcceptSelected.startsWith('text')) {
+            responseType = 'text';
+        }
+
+        return this.httpClient.get<Array<CameraSetting>>(`${this.configuration.basePath}/scanner/camera/iso/`,
+            {
+                responseType: <any>responseType,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
      * List all active sessions
      * @param xFields An optional fields mask
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
@@ -413,6 +599,51 @@ export class ScannerService {
         }
 
         return this.httpClient.get<Array<Session>>(`${this.configuration.basePath}/scanner/session/`,
+            {
+                responseType: <any>responseType,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * List of accepted values for the shutter speed camera setting
+     * @param xFields An optional fields mask
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public listShutterSpeed(xFields?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json'}): Observable<Array<CameraSetting>>;
+    public listShutterSpeed(xFields?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json'}): Observable<HttpResponse<Array<CameraSetting>>>;
+    public listShutterSpeed(xFields?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json'}): Observable<HttpEvent<Array<CameraSetting>>>;
+    public listShutterSpeed(xFields?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json'}): Observable<any> {
+
+        let headers = this.defaultHeaders;
+        if (xFields !== undefined && xFields !== null) {
+            headers = headers.set('X-Fields', String(xFields));
+        }
+
+        let httpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
+        if (httpHeaderAcceptSelected === undefined) {
+            // to determine the Accept header
+            const httpHeaderAccepts: string[] = [
+                'application/json'
+            ];
+            httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        }
+        if (httpHeaderAcceptSelected !== undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+
+        let responseType: 'text' | 'json' = 'json';
+        if(httpHeaderAcceptSelected && httpHeaderAcceptSelected.startsWith('text')) {
+            responseType = 'text';
+        }
+
+        return this.httpClient.get<Array<CameraSetting>>(`${this.configuration.basePath}/scanner/camera/shutter_speed/`,
             {
                 responseType: <any>responseType,
                 withCredentials: this.configuration.withCredentials,
@@ -471,6 +702,7 @@ export class ScannerService {
 
     /**
      * Reset the connection to the camera
+     * :raises camera.CameraException: In case of error when connecting to the camera
      * @param xFields An optional fields mask
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -554,6 +786,246 @@ export class ScannerService {
         }
 
         return this.httpClient.get<SessionDetails>(`${this.configuration.basePath}/scanner/session/${encodeURIComponent(String(sessionId))}/`,
+            {
+                responseType: <any>responseType,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Set the aperture of the camera
+     * :raises camera.CameraException: In case of error when connecting to the camera
+     * @param payload 
+     * @param xFields An optional fields mask
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public setAperture(payload: InlineObject, xFields?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json'}): Observable<Status>;
+    public setAperture(payload: InlineObject, xFields?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json'}): Observable<HttpResponse<Status>>;
+    public setAperture(payload: InlineObject, xFields?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json'}): Observable<HttpEvent<Status>>;
+    public setAperture(payload: InlineObject, xFields?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json'}): Observable<any> {
+        if (payload === null || payload === undefined) {
+            throw new Error('Required parameter payload was null or undefined when calling setAperture.');
+        }
+
+        let headers = this.defaultHeaders;
+        if (xFields !== undefined && xFields !== null) {
+            headers = headers.set('X-Fields', String(xFields));
+        }
+
+        let httpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
+        if (httpHeaderAcceptSelected === undefined) {
+            // to determine the Accept header
+            const httpHeaderAccepts: string[] = [
+                'application/json'
+            ];
+            httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        }
+        if (httpHeaderAcceptSelected !== undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            headers = headers.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType: 'text' | 'json' = 'json';
+        if(httpHeaderAcceptSelected && httpHeaderAcceptSelected.startsWith('text')) {
+            responseType = 'text';
+        }
+
+        return this.httpClient.post<Status>(`${this.configuration.basePath}/scanner/camera/aperture/`,
+            payload,
+            {
+                responseType: <any>responseType,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Set the exposure_compensation of the camera
+     * :raises camera.CameraException: In case of error when connecting to the camera
+     * @param payload 
+     * @param xFields An optional fields mask
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public setExposureCompensation(payload: InlineObject1, xFields?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json'}): Observable<Status>;
+    public setExposureCompensation(payload: InlineObject1, xFields?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json'}): Observable<HttpResponse<Status>>;
+    public setExposureCompensation(payload: InlineObject1, xFields?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json'}): Observable<HttpEvent<Status>>;
+    public setExposureCompensation(payload: InlineObject1, xFields?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json'}): Observable<any> {
+        if (payload === null || payload === undefined) {
+            throw new Error('Required parameter payload was null or undefined when calling setExposureCompensation.');
+        }
+
+        let headers = this.defaultHeaders;
+        if (xFields !== undefined && xFields !== null) {
+            headers = headers.set('X-Fields', String(xFields));
+        }
+
+        let httpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
+        if (httpHeaderAcceptSelected === undefined) {
+            // to determine the Accept header
+            const httpHeaderAccepts: string[] = [
+                'application/json'
+            ];
+            httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        }
+        if (httpHeaderAcceptSelected !== undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            headers = headers.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType: 'text' | 'json' = 'json';
+        if(httpHeaderAcceptSelected && httpHeaderAcceptSelected.startsWith('text')) {
+            responseType = 'text';
+        }
+
+        return this.httpClient.post<Status>(`${this.configuration.basePath}/scanner/camera/exposure_compensation/`,
+            payload,
+            {
+                responseType: <any>responseType,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Set the ISO of the camera
+     * :raises camera.CameraException: In case of error when connecting to the camera
+     * @param payload 
+     * @param xFields An optional fields mask
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public setIso(payload: InlineObject2, xFields?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json'}): Observable<Status>;
+    public setIso(payload: InlineObject2, xFields?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json'}): Observable<HttpResponse<Status>>;
+    public setIso(payload: InlineObject2, xFields?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json'}): Observable<HttpEvent<Status>>;
+    public setIso(payload: InlineObject2, xFields?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json'}): Observable<any> {
+        if (payload === null || payload === undefined) {
+            throw new Error('Required parameter payload was null or undefined when calling setIso.');
+        }
+
+        let headers = this.defaultHeaders;
+        if (xFields !== undefined && xFields !== null) {
+            headers = headers.set('X-Fields', String(xFields));
+        }
+
+        let httpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
+        if (httpHeaderAcceptSelected === undefined) {
+            // to determine the Accept header
+            const httpHeaderAccepts: string[] = [
+                'application/json'
+            ];
+            httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        }
+        if (httpHeaderAcceptSelected !== undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            headers = headers.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType: 'text' | 'json' = 'json';
+        if(httpHeaderAcceptSelected && httpHeaderAcceptSelected.startsWith('text')) {
+            responseType = 'text';
+        }
+
+        return this.httpClient.post<Status>(`${this.configuration.basePath}/scanner/camera/iso/`,
+            payload,
+            {
+                responseType: <any>responseType,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * Set the shutter speed of the camera
+     * :raises camera.CameraException: In case of error when connecting to the camera
+     * @param payload 
+     * @param xFields An optional fields mask
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public setShutterSpeed(payload: InlineObject3, xFields?: string, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json'}): Observable<Status>;
+    public setShutterSpeed(payload: InlineObject3, xFields?: string, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json'}): Observable<HttpResponse<Status>>;
+    public setShutterSpeed(payload: InlineObject3, xFields?: string, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'application/json'}): Observable<HttpEvent<Status>>;
+    public setShutterSpeed(payload: InlineObject3, xFields?: string, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'application/json'}): Observable<any> {
+        if (payload === null || payload === undefined) {
+            throw new Error('Required parameter payload was null or undefined when calling setShutterSpeed.');
+        }
+
+        let headers = this.defaultHeaders;
+        if (xFields !== undefined && xFields !== null) {
+            headers = headers.set('X-Fields', String(xFields));
+        }
+
+        let httpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
+        if (httpHeaderAcceptSelected === undefined) {
+            // to determine the Accept header
+            const httpHeaderAccepts: string[] = [
+                'application/json'
+            ];
+            httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        }
+        if (httpHeaderAcceptSelected !== undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            headers = headers.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType: 'text' | 'json' = 'json';
+        if(httpHeaderAcceptSelected && httpHeaderAcceptSelected.startsWith('text')) {
+            responseType = 'text';
+        }
+
+        return this.httpClient.post<Status>(`${this.configuration.basePath}/scanner/camera/shutter_speed/`,
+            payload,
             {
                 responseType: <any>responseType,
                 withCredentials: this.configuration.withCredentials,

@@ -268,7 +268,7 @@
         <p>Attach it.</p>
       </mat-expansion-panel>
 
-      <mat-expansion-panel>
+      <mat-expansion-panel [expanded]="true">
         <mat-expansion-panel-header>
           <mat-panel-title>
             <mat-icon>looks_two</mat-icon>
@@ -279,11 +279,52 @@
             <mat-icon>exposure</mat-icon>
           </mat-panel-description>
         </mat-expansion-panel-header>
+        <form>
+          <h3>Camera Settings</h3>
+          <p>
+            <mat-form-field>
+              <mat-label>ISO</mat-label>
+              <mat-select [formControl]="cameraIsoControl">
+                <mat-option value="">Do not change</mat-option>
+                <mat-option *ngFor="let iso of isoChoices" [value]="iso">
+                  {{iso}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Aperture</mat-label>
+              <mat-select [formControl]="cameraApertureControl">
+                <mat-option value="">Do not change</mat-option>
+                <mat-option *ngFor="let aperture of apertureChoices" [value]="aperture">
+                  {{aperture}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Shutter Speed</mat-label>
+              <mat-select [formControl]="cameraShutterSpeedControl">
+                <mat-option value="">Do not change</mat-option>
+                <mat-option *ngFor="let shutterSpeed of shutterSpeedChoices" [value]="shutterSpeed">
+                  {{shutterSpeed}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field>
+              <mat-label>Exposure Compensation</mat-label>
+              <mat-select [formControl]="cameraExposureCompensationControl">
+                <mat-option value="">Do not change</mat-option>
+                <mat-option *ngFor="let exposureCompensation of exposureCompensationChoices" [value]="exposureCompensation">
+                  {{exposureCompensation}}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </p>
+        </form>  
         <p>Insert the film.</p>
         <p>Attach it.</p>
       </mat-expansion-panel>
 
-      <mat-expansion-panel [expanded]="true">
+      <mat-expansion-panel [expanded]="true" *ngIf="featureSkipHole">
         <mat-expansion-panel-header>
           <mat-panel-title>
             <mat-icon>looks_3</mat-icon>

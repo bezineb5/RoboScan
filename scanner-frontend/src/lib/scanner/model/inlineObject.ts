@@ -12,23 +12,6 @@
 
 
 export interface InlineObject { 
-    initial_frame?: string;
-    max_number_of_files?: number;
-    delete_photo_after_download?: boolean;
-    metadata_lens_serial_number?: string;
-    metadata_roll_id?: string;
-    metadata_film_maker?: string;
-    metadata_film?: string;
-    metadata_film_alias?: string;
-    metadata_film_grain?: number;
-    metadata_film_type?: string;
-    metadata_developer?: string;
-    metadata_develop_process?: string;
-    metadata_developer_maker?: string;
-    metadata_developer_dilution?: string;
-    metadata_develop_time?: string;
-    metadata_lab?: string;
-    metadata_lab_address?: string;
-    metadata_filter?: string;
+    value?: string;
 }
 
