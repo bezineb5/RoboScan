@@ -32,5 +32,6 @@ ENV EXIFTOOL_HOME=/app
 COPY . ./
 RUN python -m compileall .
 
-#CMD ["python", "webapp.py", "--verbose", "--destination", "/storage/share", "--archive", "/storage/archive", "--temp", "/storage/tmp"]
-CMD ["python", "webapp.py", "-tpu", "--destination", "/storage/share", "--archive", "/storage/archive", "--temp", "/storage/tmp"]
+# Uncomment this if you have a Google Coral Edge TPU
+# CMD ["python", "webapp.py", "-tpu", "--destination", "/storage/share", "--archive", "/storage/archive", "--temp", "/storage/tmp"]
+CMD ["python", "webapp.py", "--destination", "/storage/share", "--archive", "/storage/archive", "--temp", "/storage/tmp"]
