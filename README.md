@@ -4,7 +4,7 @@ This is the source code for a Lego+Raspberry Pi-powered analog film roll scanner
 
 ## Parts
 You'll need these items to build RoboScan:
-* A digital camera with a macro lens: must be compatible with libgphoto2 with image capture and preview support.
+* A digital camera with a macro lens: must be compatible with [libgphoto2 with image capture and preview support](http://gphoto.org/proj/libgphoto2/support.php).
 * A Raspberry Pi: you may choose a Pi 4 if your camera supports USB 3, otherwise a Pi 2 or 3 is fine.
 * A 28BYJ-48 Stepper Motor with Driver: easy to find and cheap (about $6)
 * 3D-print an adapter to integrate the stepper motor in the legos: use the stepper mount and axis adapter provided by this project (you'll need some bolts to attach the motor to the adapter): [https://create.arduino.cc/projecthub/fredrikstridsman/lego-stepperbot-df26b9](https://create.arduino.cc/projecthub/fredrikstridsman/lego-stepperbot-df26b9).
