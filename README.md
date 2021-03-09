@@ -19,6 +19,8 @@ You'll need these items to build RoboScan:
 ### Diagram
 ![Roboscan wiring diagram](./documents/roboscan-wiring.svg)
 
+(made using Fritzing with the help of parts from [e-radionica.com](https://github.com/e-radionicacom/e-radionica.com-Fritzing-Library-parts-) and [Blomquist](https://forum.fritzing.org/t/led-driver-board-350ma-pwm-updated-with-test-part-v3/3322/19))
+
 ### ULN2003A wiring
 Put a 50V, 47 μF capacitor between the LED+ and LED - pins of the driver.
 
