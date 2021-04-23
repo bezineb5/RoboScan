@@ -24,10 +24,6 @@ RUN apt-get install libimage-exiftool-perl -y
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-# Copy Exiftool config to a directory, and set EXIFTOOL_HOME. See https://exiftool.org/faq.html (question 11)
-COPY ./scanner/exif/analogexif.config ./.ExifTool_config
-ENV EXIFTOOL_HOME=/app
-
 # Python code
 COPY . ./
 RUN python -m compileall .

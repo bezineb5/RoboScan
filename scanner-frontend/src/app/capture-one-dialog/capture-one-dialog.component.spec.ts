@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { CaptureOneDialogComponent } from './capture-one-dialog.component';
 
@@ -6,7 +6,7 @@ describe('CaptureOneDialogComponent', () => {
   let component: CaptureOneDialogComponent;
   let fixture: ComponentFixture<CaptureOneDialogComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ CaptureOneDialogComponent ]
     })

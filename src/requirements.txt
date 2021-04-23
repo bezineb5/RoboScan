@@ -1,26 +1,26 @@
 # Hardware
 adafruit-circuitpython-tsl2561==3.3.3
 rpi.gpio==0.7.0
-gpiozero==1.5.1
+gpiozero==1.6.2
 
 # Camera
 gphoto2==2.2.4
 
 # ExifTool
-PyExifTool==0.1.1
+PyExifTool==0.4.7
 
 # Web
 flask==1.1.2
-flask-restx==0.2.0
+flask-restx==0.3.0
 flask-socketio==4.3.1
-#eventlet
-requests==2.24.0
+requests==2.25.1
 
 # Configuration
 dataclasses-json==0.5.2
 
 # Tensorflow Lite (Python 3.8)
-numpy==1.19.3
-pillow==8.1.1
-#https://dl.google.com/coral/python/tflite_runtime-2.1.0.post1-cp38-cp38-linux_armv7l.whl
-https://dl.google.com/coral/python/tflite_runtime-2.1.0.post1-cp37-cp37m-linux_armv7l.whl
+numpy==1.20.2
+pillow==8.2.0
+
+--extra-index-url https://google-coral.github.io/py-repo/
+tflite_runtime

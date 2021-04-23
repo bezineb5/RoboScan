@@ -9,7 +9,7 @@ from typing import Callable, List
 
 import exiftool
 
-from . import metadata
+from . import metadata, exif
 
 log = logging.getLogger(__name__)
 
@@ -48,7 +48,7 @@ def async_tagger() -> Callable[[Path, metadata.MetaData, Callable[[Path], None]]
 def _tagger_thread(sync_queue: queue.SimpleQueue):
     log.info("Starting ExifTool")
 
-    with exiftool.ExifTool() as et:
+    with exiftool.ExifTool(config_file=str(exif.get_analogexif_config())) as et:
         while True:
             filename, metadata, post_action = sync_queue.get()
             params = _build_command_line(filename, metadata)
