@@ -12,7 +12,7 @@ PyExifTool==0.4.7
 # Web
 flask==1.1.2
 flask-restx==0.3.0
-flask-socketio==4.3.1
+flask-socketio==5.0.3
 requests==2.25.1
 
 # Configuration
