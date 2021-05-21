@@ -68,6 +68,16 @@ sudo groupadd docker
 sudo usermod -aG docker $USER
 ```
 
+### Install docker-compose
+Full docker-compose installation instructions are available here: [https://docs.docker.com/compose/install/#install-compose-on-linux-systems](https://docs.docker.com/compose/install/#install-compose-on-linux-systems).
+In a nutshell:
+```bash
+# Run this command to download the current stable release of Docker Compose
+sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+# Apply executable permissions to the binary
+sudo chmod +x /usr/local/bin/docker-compose
+```
+
 ### Clone this repository on your Raspberry Pi
 ```bash
 git clone https://github.com/bezineb5/RoboScan.git
