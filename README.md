@@ -70,12 +70,13 @@ sudo usermod -aG docker $USER
 
 ### Install docker-compose
 Full docker-compose installation instructions are available here: [https://docs.docker.com/compose/install/#install-compose-on-linux-systems](https://docs.docker.com/compose/install/#install-compose-on-linux-systems).
-In a nutshell:
+
+On Raspbian, the easiest is to install it through Python's pip:
 ```bash
-# Run this command to download the current stable release of Docker Compose
-sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-# Apply executable permissions to the binary
-sudo chmod +x /usr/local/bin/docker-compose
+# Install Python3 and pip
+sudo apt install python3 python3-pip
+# Install docker-compose
+sudo pip install docker-compose
 ```
 
 ### Clone this repository on your Raspberry Pi
