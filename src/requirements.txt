@@ -20,7 +20,7 @@ dataclasses-json==0.5.2
 
 # Tensorflow Lite (Python 3.8)
 numpy==1.20.2
-pillow==8.2.0
+pillow==8.3.2
 
 --extra-index-url https://google-coral.github.io/py-repo/
 tflite_runtime
