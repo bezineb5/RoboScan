@@ -9,6 +9,7 @@ WORKDIR /app
 
 # libgphoto2
 RUN curl -o gphoto2-updater.sh -L "https://raw.githubusercontent.com/gonzalo/gphoto2-updater/master/gphoto2-updater.sh" \
+    && curl -o .env -L "https://raw.githubusercontent.com/gonzalo/gphoto2-updater/master/.env" \
     && chmod +x gphoto2-updater.sh \
     && ./gphoto2-updater.sh -s
 
