@@ -116,11 +116,11 @@ The easiest is to code on you PC and deploy docker containers remotely. To do so
 
 ```bash
 # Set the DOCKERHOST variable (only once)
+# Adjust the hostname to your Raspberry Pi
 export DOCKER_HOST=tcp://piscanner.local:2376 DOCKER_TLS_VERIFY=
 
 # Then deploy as usual
 cd docker
-# Adjust the hostname to your Raspberry Pi
-docker-compose up -d --build
+docker-compose up -d
 cd ..
 ```
