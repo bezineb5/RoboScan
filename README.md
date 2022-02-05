@@ -116,7 +116,7 @@ The easiest is to code on you PC and deploy docker containers remotely. To do so
 
 ```bash
 # Set the DOCKERHOST variable (only once)
-export DOCKER_HOST=tcp://piscanner:2376 DOCKER_TLS_VERIFY=
+export DOCKER_HOST=tcp://piscanner.local:2376 DOCKER_TLS_VERIFY=
 
 # Then deploy as usual
 cd docker

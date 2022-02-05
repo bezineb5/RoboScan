@@ -1,5 +1,5 @@
 # Stage 1: Angular front-end
-FROM node:16
+FROM node:17
 
 WORKDIR /src
 
@@ -9,13 +9,13 @@ WORKDIR /src
 COPY package*.json ./
 
 RUN npm install -g @angular/cli
+# Compilation - increase the allocated memory otherwise might run out of memory
+ENV NODE_OPTIONS="--max-old-space-size=1024"
 RUN npm install
 
 # Bundle app source
 COPY . .
 
-# Compilation - increase the allocated memory otherwise might run out of memory
-ENV NODE_OPTIONS="--max-old-space-size=1024"
 RUN ng build --prod
 
 # Stage 2: nginx webserver

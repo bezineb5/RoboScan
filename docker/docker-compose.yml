@@ -4,6 +4,7 @@ services:
     depends_on:
       - roboscan
     build: ../scanner-frontend/
+    image: roboscan/scanner-frontend:1.1
     restart: unless-stopped
     ports:
       - 80:80
@@ -16,6 +17,7 @@ services:
       - /home/pi/storage/archive:/archive:ro
   roboscan:
     build: ../src/
+    image: roboscan/scanner:1.1
     restart: unless-stopped
     read_only: true
     volumes:
@@ -25,6 +27,7 @@ services:
     privileged: true
   rsyncd:
     build: ./rsyncd/
+    image: roboscan/rsyncd:1.1
     ports:
       - "873:873"
     volumes:
