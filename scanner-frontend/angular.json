@@ -56,19 +56,24 @@
                   "maximumError": "10kb"
                 }
               ]
-            }
-          }
+            },
+            "development": {}
+          },
+          "defaultConfiguration": "production"
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "scanner-frontend:build"
           },
           "configurations": {
             "production": {
               "browserTarget": "scanner-frontend:build:production"
+            },
+            "development": {
+              "browserTarget": "scanner-frontend:build:development"
             }
-          }
+          },
+          "defaultConfiguration": "development"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
@@ -110,14 +115,17 @@
         "e2e": {
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
-            "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "scanner-frontend:serve"
+            "protractorConfig": "e2e/protractor.conf.js"
           },
           "configurations": {
             "production": {
               "devServerTarget": "scanner-frontend:serve:production"
+            },
+            "development": {
+              "devServerTarget": "scanner-frontend:serve:development"
             }
-          }
+          },
+          "defaultConfiguration": "development"
         }
       }
     }
