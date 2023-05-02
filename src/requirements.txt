@@ -10,7 +10,7 @@ gphoto2==2.3.2
 PyExifTool==0.4.11
 
 # Web
-flask==1.1.2
+flask==2.3.2
 flask-restx==0.5.1
 flask-socketio==5.0.3
 requests==2.27.1
