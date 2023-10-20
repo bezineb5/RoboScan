@@ -13,7 +13,7 @@ PyExifTool==0.4.11
 flask==2.3.2
 flask-restx==0.5.1
 flask-socketio==5.0.3
-requests==2.27.1
+requests==2.31.0
 
 # Configuration
 dataclasses-json==0.5.6
