@@ -75,8 +75,6 @@ On Raspbian, the easiest is to install it through Python's pip:
 ```bash
 # Install Python3 and pip
 sudo apt install python3 python3-pip
-# Install docker-compose
-sudo pip install docker-compose
 ```
 
 ### Clone this repository on your Raspberry Pi
@@ -89,7 +87,7 @@ cd RoboScan
 Now, you will ask docker to build and start the application. This might take a while (30-120 minutes).
 ```bash
 cd docker
-docker-compose up -d --build
+docker compose up -d --build
 ```
 
 It will start all components and restart them at reboot.
