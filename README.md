@@ -68,8 +68,7 @@ sudo groupadd docker
 sudo usermod -aG docker $USER
 ```
 
-### Install docker-compose
-Full docker-compose installation instructions are available here: [https://docs.docker.com/compose/install/#install-compose-on-linux-systems](https://docs.docker.com/compose/install/#install-compose-on-linux-systems).
+### Install Python & PIP
 
 On Raspbian, the easiest is to install it through Python's pip:
 ```bash
@@ -119,6 +118,6 @@ export DOCKER_HOST=tcp://piscanner.local:2376 DOCKER_TLS_VERIFY=
 
 # Then deploy as usual
 cd docker
-docker-compose up -d
+docker compose up -d
 cd ..
 ```
