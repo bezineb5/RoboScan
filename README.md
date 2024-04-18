@@ -1,6 +1,6 @@
 # RoboScan
 This is the source code for a Lego+Raspberry Pi-powered analog film roll scanner. Watch it in action:
-[![RoboScan](https://yt-embed.herokuapp.com/embed?v=yRDomN48SOs)](https://youtu.be/yRDomN48SOs)
+[![RoboScan Demonstration](https://img.youtube.com/vi/yRDomN48SOs/maxresdefault.jpg)](https://www.youtube.com/watch?v=yRDomN48SOs)
 
 ## Parts
 You'll need these items to build RoboScan:
