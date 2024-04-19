@@ -1,6 +1,6 @@
 # RoboScan
 This is the source code for a Lego+Raspberry Pi-powered analog film roll scanner. Watch it in action:
-[![RoboScan](https://yt-embed.herokuapp.com/embed?v=yRDomN48SOs)](https://youtu.be/yRDomN48SOs)
+[![RoboScan Demonstration](https://img.youtube.com/vi/yRDomN48SOs/maxresdefault.jpg)](https://www.youtube.com/watch?v=yRDomN48SOs)
 
 ## Parts
 You'll need these items to build RoboScan:
@@ -68,15 +68,12 @@ sudo groupadd docker
 sudo usermod -aG docker $USER
 ```
 
-### Install docker-compose
-Full docker-compose installation instructions are available here: [https://docs.docker.com/compose/install/#install-compose-on-linux-systems](https://docs.docker.com/compose/install/#install-compose-on-linux-systems).
+### Install Python & PIP
 
 On Raspbian, the easiest is to install it through Python's pip:
 ```bash
 # Install Python3 and pip
 sudo apt install python3 python3-pip
-# Install docker-compose
-sudo pip install docker-compose
 ```
 
 ### Clone this repository on your Raspberry Pi
@@ -89,7 +86,7 @@ cd RoboScan
 Now, you will ask docker to build and start the application. This might take a while (30-120 minutes).
 ```bash
 cd docker
-docker-compose up -d --build
+docker compose up -d --build
 ```
 
 It will start all components and restart them at reboot.
@@ -121,6 +118,6 @@ export DOCKER_HOST=tcp://piscanner.local:2376 DOCKER_TLS_VERIFY=
 
 # Then deploy as usual
 cd docker
-docker-compose up -d
+docker compose up -d
 cd ..
 ```
